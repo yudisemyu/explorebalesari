@@ -9,6 +9,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { createClient } from "@/lib/supabase/client";
+import { deleteStorageFile } from "@/lib/storage";
 import { Loader2, ArrowLeft, Save } from "lucide-react";
 
 const schema = z.object({
@@ -26,6 +27,7 @@ export default function AdminGalleryForm({ params }: { params: Promise<{ id: str
   
   const [isLoading, setIsLoading] = useState(!isNew);
   const [isSaving, setIsSaving] = useState(false);
+  const [oldImageUrl, setOldImageUrl] = useState<string | null>(null);
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -43,6 +45,7 @@ export default function AdminGalleryForm({ params }: { params: Promise<{ id: str
         const { data } = await supabase.from("gallery").select("*").eq("id", id).single();
         
         if (data) {
+          setOldImageUrl(data.image_url);
           form.reset({
             title: data.title,
             alt_text: data.alt_text || "",
@@ -69,6 +72,10 @@ export default function AdminGalleryForm({ params }: { params: Promise<{ id: str
           updated_at: new Date().toISOString(),
         }).eq("id", id);
         if (error) throw error;
+
+        if (data.image_url !== oldImageUrl) {
+          await deleteStorageFile(oldImageUrl);
+        }
       }
       
       router.push("/admin/gallery");

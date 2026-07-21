@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
 import { createClient } from "@/lib/supabase/client";
+import { deleteStorageFile } from "@/lib/storage";
 import { Loader2, ArrowLeft, Save } from "lucide-react";
 
 const schema = z.object({
@@ -33,6 +34,7 @@ export default function AdminNewsForm({ params }: { params: Promise<{ slug: stri
   const [isLoading, setIsLoading] = useState(!isNew);
   const [isSaving, setIsSaving] = useState(false);
   const [originalId, setOriginalId] = useState<string | null>(null);
+  const [oldImageUrl, setOldImageUrl] = useState<string | null>(null);
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -67,6 +69,7 @@ export default function AdminNewsForm({ params }: { params: Promise<{ slug: stri
         
         if (data) {
           setOriginalId(data.id);
+          setOldImageUrl(data.image_url);
           form.reset({
             title: data.title,
             slug: data.slug,
@@ -104,6 +107,10 @@ export default function AdminNewsForm({ params }: { params: Promise<{ slug: stri
           updated_at: new Date().toISOString(),
         }).eq("id", originalId);
         if (error) throw error;
+
+        if (data.image_url !== oldImageUrl) {
+          await deleteStorageFile(oldImageUrl);
+        }
       }
       
       router.push("/admin/berita");

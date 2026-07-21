@@ -7,6 +7,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { createClient } from "@/lib/supabase/client";
+import { deleteStorageFile } from "@/lib/storage";
 import { Loader2, Save, CheckCircle2 } from "lucide-react";
 
 const schema = z.object({
@@ -30,6 +31,9 @@ export default function AdminHomepage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  
+  const [oldHeroImage, setOldHeroImage] = useState<string | null>(null);
+  const [oldAboutImage, setOldAboutImage] = useState<string | null>(null);
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -59,6 +63,8 @@ export default function AdminHomepage() {
       ]);
 
       if (homeRes.data) {
+        setOldHeroImage(homeRes.data.hero_image_url);
+        setOldAboutImage(homeRes.data.about_image_url);
         form.reset({
           hero_title: homeRes.data.hero_title || "",
           hero_subtitle: homeRes.data.hero_subtitle || "",
@@ -106,6 +112,16 @@ export default function AdminHomepage() {
           updated_at: new Date().toISOString(),
         }).neq("id", "00000000-0000-0000-0000-000000000000"),
       ]);
+
+      if (data.hero_image_url !== oldHeroImage) {
+        await deleteStorageFile(oldHeroImage);
+        setOldHeroImage(data.hero_image_url);
+      }
+      
+      if (data.about_image_url !== oldAboutImage) {
+        await deleteStorageFile(oldAboutImage);
+        setOldAboutImage(data.about_image_url);
+      }
 
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
