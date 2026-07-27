@@ -208,9 +208,9 @@ export default async function HomePage() {
                 icon: "🎭",
               },
               {
-                title: "Homestay",
-                description: "Pengalaman menginap di rumah warga dengan suasana pedesaan yang autentik.",
-                icon: "🏡",
+                title: "Potensi UMKM",
+                description: "Beragam usaha lokal masyarakat desa, mulai dari produk olahan, makanan, hingga berbagai produk unggulan yang memiliki potensi untuk dikembangkan.",
+                icon: "🏪",
               },
             ].map((item, index) => (
               <AnimatedSection key={item.title} variant="fadeUp" delay={index * 0.08}>
