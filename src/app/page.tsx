@@ -209,7 +209,7 @@ export default async function HomePage() {
               },
               {
                 title: "Potensi UMKM",
-                description: "Beragam usaha lokal masyarakat desa, mulai dari produk olahan, makanan, hingga berbagai produk unggulan yang memiliki potensi untuk dikembangkan.",
+                description: "Beragam produk dan usaha unggulan masyarakat Desa Balesari.",
                 icon: "🏪",
               },
             ].map((item, index) => (
