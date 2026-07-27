@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { quicksand, geistMono } from "@/lib/fonts";
+import { outfit, nunitoSans, geistMono } from "@/lib/fonts";
 import { PublicShell } from "@/components/layout/public-shell";
 import "./globals.css";
 
@@ -43,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="id" suppressHydrationWarning>
       <body
-        className={`${quicksand.variable} ${geistMono.variable} font-sans antialiased`}
+        className={`${outfit.variable} ${nunitoSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
         <PublicShell>{children}</PublicShell>
       </body>
