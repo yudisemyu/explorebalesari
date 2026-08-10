@@ -17,7 +17,7 @@ const schema = z.object({
   title: z.string().min(1, "Judul wajib diisi"),
   slug: z.string().min(1, "Slug wajib diisi"),
   excerpt: z.string().min(1, "Deskripsi singkat wajib diisi"),
-  content: z.string().min(1, "Konten wajib diisi"),
+  description: z.string().min(1, "Konten wajib diisi"),
   location: z.string().min(1, "Lokasi wajib diisi"),
   maps_url: z.string().nullable(),
   image_url: z.string().nullable(),
@@ -42,7 +42,7 @@ export default function AdminWisataForm({ params }: { params: Promise<{ slug: st
       title: "",
       slug: "",
       excerpt: "",
-      content: "",
+      description: "",
       location: "",
       maps_url: "",
       image_url: null,
@@ -75,7 +75,7 @@ export default function AdminWisataForm({ params }: { params: Promise<{ slug: st
             title: data.title,
             slug: data.slug,
             excerpt: data.excerpt,
-            content: data.content || "",
+            description: data.description || "",
             location: data.location || "",
             maps_url: data.maps_url || "",
             image_url: data.image_url,
@@ -206,10 +206,10 @@ export default function AdminWisataForm({ params }: { params: Promise<{ slug: st
           <div className="space-y-2">
             <label className="text-sm font-medium">Konten Lengkap</label>
             <TiptapEditor 
-              value={form.watch("content")} 
-              onChange={(html) => form.setValue("content", html)}
+              value={form.watch("description")} 
+              onChange={(html) => form.setValue("description", html)}
             />
-            {form.formState.errors.content && <p className="text-sm text-destructive">{form.formState.errors.content.message}</p>}
+            {form.formState.errors.description && <p className="text-sm text-destructive">{form.formState.errors.description.message}</p>}
           </div>
 
           <div className="flex flex-col sm:flex-row gap-6 pt-4 border-t border-border/50">
