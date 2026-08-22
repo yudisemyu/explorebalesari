@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { TreePine, MapPin, Phone, Mail } from "lucide-react";
+import { getContacts } from "@/services/homepage";
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -27,8 +28,9 @@ const quickLinks = [
   { href: "/galeri", label: "Galeri" },
 ];
 
-export function Footer() {
+export async function Footer() {
   const currentYear = new Date().getFullYear();
+  const contacts = await getContacts();
 
   return (
     <footer className="bg-foreground text-background/80">
@@ -78,16 +80,16 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
                 <span className="text-sm text-background/60">
-                  Desa Balesari, Kec. Windusari, Kab. Magelang, Jawa Tengah
+                  {contacts?.address || "Desa Balesari, Kec. Windusari, Kab. Magelang, Jawa Tengah"}
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-4 w-4 shrink-0 text-primary" />
-                <span className="text-sm text-background/60">(0293) 000-000</span>
+                <span className="text-sm text-background/60">{contacts?.phone || "(0293) 000-000"}</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-4 w-4 shrink-0 text-primary" />
-                <span className="text-sm text-background/60">info@desabalesari.id</span>
+                <span className="text-sm text-background/60">{contacts?.email || "info@desabalesari.id"}</span>
               </li>
             </ul>
           </div>
@@ -98,24 +100,28 @@ export function Footer() {
               Ikuti Kami
             </h3>
             <div className="flex gap-3">
-              <a
-                href="#"
-                className="flex h-10 w-10 items-center justify-center rounded-lg bg-background/10 text-background/60 hover:bg-primary hover:text-primary-foreground transition-colors"
-                aria-label="Instagram"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <InstagramIcon className="h-4 w-4" />
-              </a>
-              <a
-                href="#"
-                className="flex h-10 w-10 items-center justify-center rounded-lg bg-background/10 text-background/60 hover:bg-primary hover:text-primary-foreground transition-colors"
-                aria-label="Facebook"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FacebookIcon className="h-4 w-4" />
-              </a>
+              {(!contacts || contacts.instagram) && (
+                <a
+                  href={contacts?.instagram || "#"}
+                  className="flex h-10 w-10 items-center justify-center rounded-lg bg-background/10 text-background/60 hover:bg-primary hover:text-primary-foreground transition-colors"
+                  aria-label="Instagram"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <InstagramIcon className="h-4 w-4" />
+                </a>
+              )}
+              {(!contacts || contacts.facebook) && (
+                <a
+                  href={contacts?.facebook || "#"}
+                  className="flex h-10 w-10 items-center justify-center rounded-lg bg-background/10 text-background/60 hover:bg-primary hover:text-primary-foreground transition-colors"
+                  aria-label="Facebook"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FacebookIcon className="h-4 w-4" />
+                </a>
+              )}
             </div>
             <p className="mt-6 text-xs text-background/40">
               Ikuti media sosial kami untuk informasi terbaru seputar Desa Balesari.

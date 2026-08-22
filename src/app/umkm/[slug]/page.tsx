@@ -4,7 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { getUmkmBySlug } from "@/services/umkm";
 import { AnimatedSection } from "@/components/motion/animated-section";
-import { ArrowLeft, Phone, MapPin, Store, User, ExternalLink } from "lucide-react";
+import {
+  ArrowLeft,
+  Phone,
+  MapPin,
+  Store,
+  User,
+  ExternalLink,
+} from "lucide-react";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -17,7 +24,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: umkm.name,
-    description: umkm.excerpt || `Produk UMKM ${umkm.name} dari Desa Balesari.`,
+    description:
+      umkm.excerpt || `Produk UMKM ${umkm.name} dari Desa Balesari.`,
     openGraph: {
       title: umkm.name,
       description: umkm.excerpt || undefined,
@@ -26,12 +34,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-
 export default async function UmkmDetailPage({ params }: Props) {
   const { slug } = await params;
   const umkm = await getUmkmBySlug(slug);
 
   if (!umkm) notFound();
+
+  const hasGallery = umkm.images && umkm.images.length > 0;
 
   return (
     <>
@@ -85,14 +94,45 @@ export default async function UmkmDetailPage({ params }: Props) {
                     dangerouslySetInnerHTML={{ __html: umkm.description }}
                   />
                 ) : umkm.excerpt ? (
-                  <p className="text-lg leading-relaxed text-muted-foreground">{umkm.excerpt}</p>
+                  <p className="text-lg leading-relaxed text-muted-foreground">
+                    {umkm.excerpt}
+                  </p>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-12 text-center">
                     <Store className="h-12 w-12 text-muted-foreground/30 mb-4" />
-                    <p className="text-muted-foreground">Deskripsi belum tersedia.</p>
+                    <p className="text-muted-foreground">
+                      Deskripsi belum tersedia.
+                    </p>
                   </div>
                 )}
               </AnimatedSection>
+
+              {/* Gallery */}
+              {hasGallery && (
+                <AnimatedSection variant="fadeUp" delay={0.1}>
+                  <div className="mt-12 border-t border-border/50 pt-10">
+                    <h2 className="text-xl font-bold tracking-tight text-foreground mb-6">
+                      Galeri Foto
+                    </h2>
+                    <div className="grid gap-3 grid-cols-2 sm:grid-cols-3">
+                      {umkm.images.map((img, index) => (
+                        <div
+                          key={img.id}
+                          className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-border/50 bg-muted/30"
+                        >
+                          <Image
+                            src={img.image_url}
+                            alt={`${umkm.name} foto ${index + 1}`}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            sizes="(max-width: 640px) 50vw, 33vw"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </AnimatedSection>
+              )}
             </div>
 
             {/* Sidebar info */}
@@ -107,8 +147,12 @@ export default async function UmkmDetailPage({ params }: Props) {
                     <div className="flex items-start gap-3">
                       <User className="h-4 w-4 mt-0.5 text-primary shrink-0" />
                       <div>
-                        <p className="text-xs text-muted-foreground">Pemilik</p>
-                        <p className="text-sm font-medium text-foreground">{umkm.owner_name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Pemilik
+                        </p>
+                        <p className="text-sm font-medium text-foreground">
+                          {umkm.owner_name}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -117,8 +161,12 @@ export default async function UmkmDetailPage({ params }: Props) {
                     <div className="flex items-start gap-3">
                       <Phone className="h-4 w-4 mt-0.5 text-primary shrink-0" />
                       <div>
-                        <p className="text-xs text-muted-foreground">Telepon</p>
-                        <p className="text-sm font-medium text-foreground">{umkm.phone}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Telepon
+                        </p>
+                        <p className="text-sm font-medium text-foreground">
+                          {umkm.phone}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -128,12 +176,14 @@ export default async function UmkmDetailPage({ params }: Props) {
                       <MapPin className="h-4 w-4 mt-0.5 text-primary shrink-0" />
                       <div>
                         <p className="text-xs text-muted-foreground">Alamat</p>
-                        <p className="text-sm font-medium text-foreground">{umkm.address}</p>
-                        
+                        <p className="text-sm font-medium text-foreground">
+                          {umkm.address}
+                        </p>
+
                         {umkm.maps_url && (
-                          <a 
-                            href={umkm.maps_url} 
-                            target="_blank" 
+                          <a
+                            href={umkm.maps_url}
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
                           >

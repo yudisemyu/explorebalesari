@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { outfit, nunitoSans, geistMono } from "@/lib/fonts";
 import { PublicShell } from "@/components/layout/public-shell";
+import { Footer } from "@/components/layout/footer";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -45,7 +46,7 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} ${nunitoSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
-        <PublicShell>{children}</PublicShell>
+        <PublicShell footer={<Footer />}>{children}</PublicShell>
       </body>
     </html>
   );

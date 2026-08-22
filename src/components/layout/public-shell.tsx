@@ -2,10 +2,15 @@
 
 import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
 import { FloatingScrollButton } from "@/components/ui/floating-scroll-button";
 
-export function PublicShell({ children }: { children: React.ReactNode }) {
+export function PublicShell({ 
+  children, 
+  footer 
+}: { 
+  children: React.ReactNode;
+  footer: React.ReactNode;
+}) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
 
@@ -17,7 +22,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
     <>
       <Navbar />
       <main className="min-h-screen">{children}</main>
-      <Footer />
+      {footer}
       <FloatingScrollButton />
     </>
   );

@@ -92,3 +92,11 @@ export interface VillageProfile {
   content: string | null;
   updated_at: string;
 }
+
+export interface UmkmImage {
+  id: string;
+  umkm_id: string;
+  image_url: string;
+  sort_order: number;
+  created_at: string;
+}
