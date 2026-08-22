@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { TreePine, MapPin, Phone, Mail } from "lucide-react";
+import Image from "next/image";
+import { MapPin, Phone, Mail } from "lucide-react";
 import { getContacts } from "@/services/homepage";
 
 function InstagramIcon({ className }: { className?: string }) {
@@ -40,8 +41,8 @@ export async function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <TreePine className="h-5 w-5" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white overflow-hidden">
+                <Image src="/logo.png" alt="Logo" width={24} height={24} className="object-contain" />
               </div>
               <span className="text-lg font-bold text-background tracking-tight">
                 Desa Balesari

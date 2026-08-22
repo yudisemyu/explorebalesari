@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/footer";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://explorebalesari.online"),
   title: {
     default: "Desa Balesari — Pesona Alam & Budaya Desa Wisata",
     template: "%s | Desa Balesari",
@@ -18,8 +19,18 @@ export const metadata: Metadata = {
     "wisata Jawa Tengah",
     "desa wisata alam",
     "UMKM desa",
+    "Windusari",
+    "Gunung Sumbing",
+    "wisata alam Magelang",
+    "desa wisata Jawa Tengah",
+    "Balesari Windusari",
   ],
   authors: [{ name: "Desa Balesari" }],
+  creator: "Desa Balesari",
+  publisher: "Pemerintah Desa Balesari",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
     locale: "id_ID",
@@ -33,6 +44,17 @@ export const metadata: Metadata = {
     title: "Desa Balesari — Pesona Alam & Budaya Desa Wisata",
     description:
       "Jelajahi keindahan Desa Balesari, desa wisata dengan pesona alam pegunungan dan budaya yang kaya.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 

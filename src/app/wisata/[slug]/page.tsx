@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getTourismBySlug } from "@/services/tourism";
 import { AnimatedSection } from "@/components/motion/animated-section";
+import { JsonLd, touristAttractionJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
 import {
   MapPin,
   ArrowLeft,
@@ -57,6 +58,23 @@ export default async function WisataDetailPage({ params }: Props) {
 
   return (
     <>
+      <JsonLd
+        data={touristAttractionJsonLd({
+          title: tourism.title,
+          slug: tourism.slug,
+          description: tourism.excerpt,
+          imageUrl: tourism.image_url,
+          location: tourism.location,
+        })}
+      />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Beranda", url: "/" },
+          { name: "Wisata", url: "/wisata" },
+          { name: tourism.title, url: `/wisata/${tourism.slug}` },
+        ])}
+      />
+
       {/* ==================== HERO — Full viewport ==================== */}
       <section className="relative flex min-h-screen items-end overflow-hidden">
         {tourism.image_url ? (

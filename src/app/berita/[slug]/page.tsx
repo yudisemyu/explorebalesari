@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getNewsBySlug } from "@/services/news";
 import { AnimatedSection } from "@/components/motion/animated-section";
+import { JsonLd, articleJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
 import { ArrowLeft, Calendar, User, Newspaper } from "lucide-react";
 
 interface Props {
@@ -47,6 +48,25 @@ export default async function BeritaDetailPage({ params }: Props) {
 
   return (
     <>
+      <JsonLd
+        data={articleJsonLd({
+          title: news.title,
+          slug: news.slug,
+          excerpt: news.excerpt,
+          imageUrl: news.image_url,
+          author: news.author,
+          publishedAt: news.published_at,
+          updatedAt: news.updated_at,
+        })}
+      />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Beranda", url: "/" },
+          { name: "Berita", url: "/berita" },
+          { name: news.title, url: `/berita/${news.slug}` },
+        ])}
+      />
+
       {/* Hero */}
       <section className="relative flex min-h-[45vh] items-end overflow-hidden">
         {news.image_url ? (

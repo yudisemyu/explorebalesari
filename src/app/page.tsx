@@ -8,6 +8,7 @@ import { NewsSection } from "@/components/features/home/news-section";
 import { GallerySection } from "@/components/features/home/gallery-section";
 import { MapSection } from "@/components/features/home/map-section";
 import { ContactSection } from "@/components/features/home/contact-section";
+import { JsonLd, websiteJsonLd, organizationJsonLd } from "@/lib/jsonld";
 import { TreePine, Mountain, Users, Store, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -19,6 +20,9 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd data={websiteJsonLd()} />
+      <JsonLd data={organizationJsonLd()} />
+
       {/* ==================== HERO SECTION ==================== */}
       <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
         {homepage?.hero_image_url ? (

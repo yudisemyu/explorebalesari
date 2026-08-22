@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getUmkmBySlug } from "@/services/umkm";
 import { AnimatedSection } from "@/components/motion/animated-section";
 import { UmkmGallery } from "@/components/features/umkm/umkm-gallery";
+import { JsonLd, localBusinessJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
 import {
   ArrowLeft,
   Phone,
@@ -45,6 +46,25 @@ export default async function UmkmDetailPage({ params }: Props) {
 
   return (
     <>
+      <JsonLd
+        data={localBusinessJsonLd({
+          name: umkm.name,
+          slug: umkm.slug,
+          description: umkm.excerpt,
+          imageUrl: umkm.image_url,
+          phone: umkm.phone,
+          address: umkm.address,
+          category: umkm.category,
+        })}
+      />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Beranda", url: "/" },
+          { name: "UMKM", url: "/umkm" },
+          { name: umkm.name, url: `/umkm/${umkm.slug}` },
+        ])}
+      />
+
       {/* Hero */}
       <section className="relative flex min-h-[45vh] items-end overflow-hidden">
         {umkm.image_url ? (

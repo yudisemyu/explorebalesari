@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, TreePine } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -63,12 +64,12 @@ export function Navbar() {
             className="flex items-center gap-2.5 group"
           >
             <div className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-lg transition-colors",
+              "relative flex h-9 w-9 items-center justify-center rounded-lg transition-colors overflow-hidden",
               showTransparent
-                ? "bg-white/15 text-white"
-                : "bg-primary/10 text-primary"
+                ? "bg-white/90"
+                : "bg-primary/10"
             )}>
-              <TreePine className="h-5 w-5" />
+              <Image src="/logo.png" alt="Logo Desa Balesari" width={24} height={24} className="object-contain" priority />
             </div>
             <span
               className={cn(
