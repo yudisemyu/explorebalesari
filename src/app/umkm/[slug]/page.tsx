@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getUmkmBySlug } from "@/services/umkm";
 import { AnimatedSection } from "@/components/motion/animated-section";
+import { UmkmGallery } from "@/components/features/umkm/umkm-gallery";
 import {
   ArrowLeft,
   Phone,
@@ -64,19 +65,29 @@ export default async function UmkmDetailPage({ params }: Props) {
           <AnimatedSection variant="fadeUp">
             <Link
               href="/umkm"
-              className="inline-flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white transition-colors mb-4"
+              className="inline-flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white transition-colors mb-6"
             >
               <ArrowLeft className="h-4 w-4" />
               Kembali ke UMKM
             </Link>
+
             {umkm.category && (
-              <span className="inline-flex items-center rounded-full bg-white/15 backdrop-blur-sm px-3 py-1 text-xs font-medium text-white/90 mb-3">
-                {umkm.category}
-              </span>
+              <div className="mb-4">
+                <span className="inline-flex items-center rounded-full bg-white/15 backdrop-blur-sm px-3 py-1 text-xs font-medium text-white/90 border border-white/10">
+                  {umkm.category}
+                </span>
+              </div>
             )}
+
             <h1 className="text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
               {umkm.name}
             </h1>
+
+            {umkm.excerpt && (
+              <p className="mt-4 max-w-2xl text-base text-white/60 leading-relaxed">
+                {umkm.excerpt}
+              </p>
+            )}
           </AnimatedSection>
         </div>
       </section>
@@ -93,10 +104,6 @@ export default async function UmkmDetailPage({ params }: Props) {
                     className="prose-content"
                     dangerouslySetInnerHTML={{ __html: umkm.description }}
                   />
-                ) : umkm.excerpt ? (
-                  <p className="text-lg leading-relaxed text-muted-foreground">
-                    {umkm.excerpt}
-                  </p>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-12 text-center">
                     <Store className="h-12 w-12 text-muted-foreground/30 mb-4" />
@@ -114,22 +121,10 @@ export default async function UmkmDetailPage({ params }: Props) {
                     <h2 className="text-xl font-bold tracking-tight text-foreground mb-6">
                       Galeri Foto
                     </h2>
-                    <div className="grid gap-3 grid-cols-2 sm:grid-cols-3">
-                      {umkm.images.map((img, index) => (
-                        <div
-                          key={img.id}
-                          className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-border/50 bg-muted/30"
-                        >
-                          <Image
-                            src={img.image_url}
-                            alt={`${umkm.name} foto ${index + 1}`}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                            sizes="(max-width: 640px) 50vw, 33vw"
-                          />
-                        </div>
-                      ))}
-                    </div>
+                    <UmkmGallery
+                      images={umkm.images}
+                      umkmName={umkm.name}
+                    />
                   </div>
                 </AnimatedSection>
               )}
