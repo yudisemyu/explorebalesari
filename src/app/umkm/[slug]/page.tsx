@@ -13,6 +13,7 @@ import {
   Store,
   User,
   ExternalLink,
+  MessageCircle,
 } from "lucide-react";
 
 interface Props {
@@ -43,6 +44,23 @@ export default async function UmkmDetailPage({ params }: Props) {
   if (!umkm) notFound();
 
   const hasGallery = umkm.images && umkm.images.length > 0;
+  
+  // Format phone for WhatsApp (handles 08..., +62..., 62..., 8..., etc.)
+  const rawPhone = umkm.phone?.trim() || "";
+  let whatsappNumber: string | null = null;
+  if (rawPhone) {
+    const digits = rawPhone.replace(/\D/g, "");
+    if (digits.startsWith("0")) {
+      whatsappNumber = "62" + digits.slice(1);
+    } else if (digits.startsWith("62")) {
+      whatsappNumber = digits;
+    } else if (digits.startsWith("8")) {
+      whatsappNumber = "62" + digits;
+    } else if (digits.length >= 6) {
+      whatsappNumber = digits;
+    }
+  }
+  const whatsappLink = whatsappNumber ? `https://wa.me/${whatsappNumber}` : null;
 
   return (
     <>
@@ -102,12 +120,6 @@ export default async function UmkmDetailPage({ params }: Props) {
             <h1 className="text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
               {umkm.name}
             </h1>
-
-            {umkm.excerpt && (
-              <p className="mt-4 max-w-2xl text-base text-white/60 leading-relaxed">
-                {umkm.excerpt}
-              </p>
-            )}
           </AnimatedSection>
         </div>
       </section>
@@ -160,35 +172,48 @@ export default async function UmkmDetailPage({ params }: Props) {
 
                   {umkm.owner_name && (
                     <div className="flex items-start gap-3">
-                      <User className="h-4 w-4 mt-0.5 text-primary shrink-0" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">
-                          Pemilik
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 shrink-0">
+                        <User className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="mt-1">
+                        <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-0.5">
+                          Pemilik Usaha
                         </p>
-                        <p className="text-sm font-medium text-foreground">
+                        <p className="text-base font-bold text-foreground">
                           {umkm.owner_name}
                         </p>
                       </div>
                     </div>
                   )}
 
-                  {umkm.phone && (
-                    <div className="flex items-start gap-3">
-                      <Phone className="h-4 w-4 mt-0.5 text-primary shrink-0" />
+                  {rawPhone && (
+                    <div className="flex items-start gap-3 pt-3 border-t border-border/50">
+                      <Phone className="h-4 w-4 mt-1 text-muted-foreground shrink-0" />
                       <div>
-                        <p className="text-xs text-muted-foreground">
-                          Telepon
+                        <p className="text-xs text-muted-foreground mb-0.5">
+                          Telepon / WhatsApp
                         </p>
-                        <p className="text-sm font-medium text-foreground">
-                          {umkm.phone}
-                        </p>
+                        {whatsappLink ? (
+                          <a
+                            href={whatsappLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm font-semibold text-primary hover:underline inline-flex items-center gap-1.5"
+                          >
+                            {rawPhone}
+                          </a>
+                        ) : (
+                          <p className="text-sm font-medium text-foreground">
+                            {rawPhone}
+                          </p>
+                        )}
                       </div>
                     </div>
                   )}
 
                   {umkm.address && (
-                    <div className="flex items-start gap-3">
-                      <MapPin className="h-4 w-4 mt-0.5 text-primary shrink-0" />
+                    <div className="flex items-start gap-3 pt-3 border-t border-border/50">
+                      <MapPin className="h-4 w-4 mt-1 text-muted-foreground shrink-0" />
                       <div>
                         <p className="text-xs text-muted-foreground">Alamat</p>
                         <p className="text-sm font-medium text-foreground">
@@ -207,6 +232,20 @@ export default async function UmkmDetailPage({ params }: Props) {
                           </a>
                         )}
                       </div>
+                    </div>
+                  )}
+                  
+                  {whatsappLink && (
+                    <div className="pt-4 mt-4 border-t border-border/50">
+                      <a
+                        href={whatsappLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-sm font-bold text-white transition-all hover:bg-[#20bd5a] hover:shadow-md hover:-translate-y-0.5"
+                      >
+                        <MessageCircle className="h-5 w-5" />
+                        Hubungi via WhatsApp
+                      </a>
                     </div>
                   )}
                 </div>

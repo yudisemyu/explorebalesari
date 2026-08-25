@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { getTourismBySlug } from "@/services/tourism";
+import { getTourismBySlug, getOtherTourism } from "@/services/tourism";
 import { AnimatedSection } from "@/components/motion/animated-section";
+import { TourismGallery } from "@/components/features/wisata/tourism-gallery";
+import { TourismCard } from "@/components/ui/tourism-card";
 import { JsonLd, touristAttractionJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
 import {
   MapPin,
@@ -55,6 +57,9 @@ export default async function WisataDetailPage({ params }: Props) {
   const tourism = await getTourismBySlug(slug);
 
   if (!tourism) notFound();
+
+  const hasGallery = tourism.images && tourism.images.length > 0;
+  const otherTourism = await getOtherTourism(slug);
 
   return (
     <>
@@ -228,6 +233,32 @@ export default async function WisataDetailPage({ params }: Props) {
         </section>
       )}
 
+      {/* ==================== GALLERY — Foto Wisata ==================== */}
+      {hasGallery && (
+        <section className="py-20 lg:py-28 bg-muted/30">
+          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+            <AnimatedSection variant="fadeUp">
+              <div className="text-center mb-14">
+                <span className="inline-block text-sm font-semibold uppercase tracking-wider text-primary mb-2">
+                  Galeri
+                </span>
+                <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                  Foto {tourism.title}
+                </h2>
+                <div className="mt-5 h-1 w-16 rounded-full bg-primary mx-auto" />
+              </div>
+            </AnimatedSection>
+
+            <AnimatedSection variant="fadeUp" delay={0.1}>
+              <TourismGallery
+                images={tourism.images}
+                tourismTitle={tourism.title}
+              />
+            </AnimatedSection>
+          </div>
+        </section>
+      )}
+
       {/* ==================== CTA — Ajakan Berkunjung ==================== */}
       <section className="relative overflow-hidden bg-gradient-to-br from-green-900 via-green-800 to-emerald-900 py-24 lg:py-32">
         <div className="absolute inset-0 bg-[url('/hero-pattern.svg')] opacity-5" />
@@ -263,6 +294,39 @@ export default async function WisataDetailPage({ params }: Props) {
           </AnimatedSection>
         </div>
       </section>
+
+      {/* ==================== WISATA LAIN ==================== */}
+      {otherTourism.length > 0 && (
+        <section className="py-20 lg:py-28">
+          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+            <AnimatedSection variant="fadeUp">
+              <div className="text-center mb-14">
+                <span className="inline-block text-sm font-semibold uppercase tracking-wider text-primary mb-2">
+                  Destinasi
+                </span>
+                <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                  Jelajahi Wisata Lain
+                </h2>
+                <div className="mt-5 h-1 w-16 rounded-full bg-primary mx-auto" />
+              </div>
+            </AnimatedSection>
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {otherTourism.map((item, index) => (
+                <AnimatedSection key={item.slug} variant="fadeUp" delay={index * 0.08}>
+                  <TourismCard
+                    title={item.title}
+                    slug={item.slug}
+                    excerpt={item.excerpt}
+                    imageUrl={item.image_url}
+                    location={item.location}
+                  />
+                </AnimatedSection>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </>
   );
 }

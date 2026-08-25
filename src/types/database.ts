@@ -100,3 +100,11 @@ export interface UmkmImage {
   sort_order: number;
   created_at: string;
 }
+
+export interface TourismImage {
+  id: string;
+  tourism_id: string;
+  image_url: string;
+  sort_order: number;
+  created_at: string;
+}

@@ -8,9 +8,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { MultiImageUpload } from "@/components/ui/multi-image-upload";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
 import { createClient } from "@/lib/supabase/client";
-import { deleteStorageFile } from "@/lib/storage";
+import { deleteStorageFile, deleteStorageFiles } from "@/lib/storage";
 import { Loader2, ArrowLeft, Save } from "lucide-react";
 
 const schema = z.object({
@@ -26,6 +27,12 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
+interface ExtraImage {
+  id?: string;
+  image_url: string;
+  sort_order: number;
+}
+
 export default function AdminWisataForm({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const router = useRouter();
@@ -35,6 +42,11 @@ export default function AdminWisataForm({ params }: { params: Promise<{ slug: st
   const [isSaving, setIsSaving] = useState(false);
   const [originalId, setOriginalId] = useState<string | null>(null);
   const [oldImageUrl, setOldImageUrl] = useState<string | null>(null);
+
+  // Multi-image state
+  const [extraImages, setExtraImages] = useState<ExtraImage[]>([]);
+  const [removedImageIds, setRemovedImageIds] = useState<string[]>([]);
+  const [removedImageUrls, setRemovedImageUrls] = useState<string[]>([]);
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -81,6 +93,23 @@ export default function AdminWisataForm({ params }: { params: Promise<{ slug: st
             image_url: data.image_url,
             is_featured: data.is_featured || false,
           });
+
+          // Load extra images
+          const { data: images } = await supabase
+            .from("tourism_images")
+            .select("*")
+            .eq("tourism_id", data.id)
+            .order("sort_order", { ascending: true });
+
+          if (images) {
+            setExtraImages(
+              images.map((img) => ({
+                id: img.id,
+                image_url: img.image_url,
+                sort_order: img.sort_order,
+              }))
+            );
+          }
         }
         setIsLoading(false);
       }
@@ -88,14 +117,37 @@ export default function AdminWisataForm({ params }: { params: Promise<{ slug: st
     }
   }, [isNew, slug, form]);
 
+  const handleAddImage = (url: string) => {
+    setExtraImages((prev) => [
+      ...prev,
+      { image_url: url, sort_order: prev.length },
+    ]);
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const removed = extraImages[index];
+    if (removed.id) {
+      setRemovedImageIds((prev) => [...prev, removed.id!]);
+    }
+    setRemovedImageUrls((prev) => [...prev, removed.image_url]);
+    setExtraImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const onSubmit = async (data: FormData) => {
     setIsSaving(true);
     const supabase = createClient();
 
     try {
+      let tourismId = originalId;
+
       if (isNew) {
-        const { error } = await supabase.from("tourism").insert([data]);
+        const { data: inserted, error } = await supabase
+          .from("tourism")
+          .insert([data])
+          .select("id")
+          .single();
         if (error) throw error;
+        tourismId = inserted.id;
       } else {
         const { error } = await supabase.from("tourism").update({
           ...data,
@@ -106,6 +158,34 @@ export default function AdminWisataForm({ params }: { params: Promise<{ slug: st
         if (data.image_url !== oldImageUrl) {
           await deleteStorageFile(oldImageUrl);
         }
+      }
+
+      // Handle extra images: delete removed ones
+      if (removedImageIds.length > 0) {
+        await supabase
+          .from("tourism_images")
+          .delete()
+          .in("id", removedImageIds);
+      }
+
+      // Delete removed image files from storage
+      if (removedImageUrls.length > 0) {
+        await deleteStorageFiles(removedImageUrls);
+      }
+
+      // Insert new images (ones without an id)
+      const newImages = extraImages.filter((img) => !img.id);
+      if (newImages.length > 0 && tourismId) {
+        const { error: imgError } = await supabase
+          .from("tourism_images")
+          .insert(
+            newImages.map((img, index) => ({
+              tourism_id: tourismId,
+              image_url: img.image_url,
+              sort_order: index,
+            }))
+          );
+        if (imgError) throw imgError;
       }
       
       router.push("/admin/wisata");
@@ -151,6 +231,17 @@ export default function AdminWisataForm({ params }: { params: Promise<{ slug: st
               bucket="wisata" 
               value={form.watch("image_url")} 
               onChange={(url) => form.setValue("image_url", url)} 
+            />
+          </div>
+
+          {/* Multi image gallery */}
+          <div className="pt-4 border-t border-border/50">
+            <MultiImageUpload
+              images={extraImages}
+              onAdd={handleAddImage}
+              onRemove={handleRemoveImage}
+              maxImages={5}
+              bucket="wisata"
             />
           </div>
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Phone, Mail } from "lucide-react";
+import { MapPin, Phone, Mail, Lock } from "lucide-react";
 import { getContacts } from "@/services/homepage";
 
 function InstagramIcon({ className }: { className?: string }) {
@@ -41,9 +41,13 @@ export async function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white overflow-hidden">
-                <Image src="/logo.png" alt="Logo" width={24} height={24} className="object-contain" />
-              </div>
+              <Image
+                src="/logo.png"
+                alt="Logo Desa Balesari"
+                width={36}
+                height={36}
+                className="h-9 w-9 object-contain brightness-0 invert opacity-90 transition-opacity group-hover:opacity-100"
+              />
               <span className="text-lg font-bold text-background tracking-tight">
                 Desa Balesari
               </span>
@@ -134,13 +138,23 @@ export async function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-background/10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <p className="text-xs text-background/40">
+          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row text-xs text-background/40">
+            <p>
               © {currentYear} Desa Balesari. Hak cipta dilindungi.
             </p>
-            <p className="text-xs text-background/40">
-              Dibangun dengan ❤️ untuk Desa Balesari
-            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+              <p>
+                Dibangun dengan ❤️ untuk Desa Balesari
+              </p>
+              <span className="hidden sm:inline text-background/20">•</span>
+              <Link
+                href="/admin"
+                className="inline-flex items-center gap-1.5 text-background/40 transition-colors hover:text-primary"
+              >
+                <Lock className="h-3.5 w-3.5" />
+                <span>Panel Admin</span>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

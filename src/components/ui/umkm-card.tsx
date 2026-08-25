@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Store } from "lucide-react";
+import { Store, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface UmkmCardProps {
@@ -60,9 +60,14 @@ export function UmkmCard({
           {name}
         </h3>
         {ownerName && (
-          <p className="mt-1 text-xs text-muted-foreground">
-            oleh {ownerName}
-          </p>
+          <div className="mt-3 flex items-center gap-2">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
+              <User className="h-3.5 w-3.5 text-primary" />
+            </div>
+            <p className="text-xs font-medium text-foreground">
+              {ownerName}
+            </p>
+          </div>
         )}
         {excerpt && (
           <p className="mt-2 text-sm text-muted-foreground line-clamp-2">

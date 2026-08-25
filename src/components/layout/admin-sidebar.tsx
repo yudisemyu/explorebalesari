@@ -41,8 +41,8 @@ export function AdminSidebar() {
     <>
       {/* Mobile Topbar */}
       <div className="flex h-16 items-center justify-between border-b border-border/50 bg-card px-4 lg:hidden sticky top-0 z-40">
-        <Link href="/admin/dashboard" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="Logo" width={24} height={24} className="object-contain" />
+        <Link href="/admin/dashboard" className="flex items-center gap-2.5">
+          <Image src="/logo.png" alt="Logo" width={32} height={32} className="h-7 w-7 object-contain" />
           <span className="font-bold">Admin Panel</span>
         </Link>
         <button
@@ -62,9 +62,7 @@ export function AdminSidebar() {
       >
         <div className="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-4">
           <div className="flex h-16 shrink-0 items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-              <Image src="/logo.png" alt="Logo" width={20} height={20} className="object-contain" />
-            </div>
+            <Image src="/logo.png" alt="Logo" width={36} height={36} className="h-8 w-8 object-contain" />
             <span className="text-lg font-bold">Admin Balesari</span>
           </div>
           

@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Plus, Search, Edit, Trash2, Loader2, ExternalLink } from "lucide-react";
 import { Tourism } from "@/types/database";
-import { deleteStorageFile } from "@/lib/storage";
+import { deleteStorageFile, deleteStorageFiles } from "@/lib/storage";
 
 export default function AdminWisataList() {
   const [items, setItems] = useState<Tourism[]>([]);
@@ -36,12 +36,24 @@ export default function AdminWisataList() {
     if (!confirm(`Apakah Anda yakin ingin menghapus "${title}"?`)) return;
 
     const supabase = createClient();
+
+    // Fetch extra images before deleting (CASCADE will remove rows but not storage files)
+    const { data: extraImages } = await supabase
+      .from("tourism_images")
+      .select("image_url")
+      .eq("tourism_id", id);
+
     const { error } = await supabase.from("tourism").delete().eq("id", id);
     
     if (error) {
       alert("Gagal menghapus data");
     } else {
+      // Delete main image
       await deleteStorageFile(imageUrl);
+      // Delete extra images from storage
+      if (extraImages && extraImages.length > 0) {
+        await deleteStorageFiles(extraImages.map((img) => img.image_url));
+      }
       loadData();
     }
   };

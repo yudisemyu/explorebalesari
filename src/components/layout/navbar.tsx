@@ -63,14 +63,17 @@ export function Navbar() {
             href="/"
             className="flex items-center gap-2.5 group"
           >
-            <div className={cn(
-              "relative flex h-9 w-9 items-center justify-center rounded-lg transition-colors overflow-hidden",
-              showTransparent
-                ? "bg-white/90"
-                : "bg-primary/10"
-            )}>
-              <Image src="/logo.png" alt="Logo Desa Balesari" width={24} height={24} className="object-contain" priority />
-            </div>
+            <Image
+              src="/logo.png"
+              alt="Logo Desa Balesari"
+              width={36}
+              height={36}
+              className={cn(
+                "h-9 w-9 object-contain transition-transform group-hover:scale-105",
+                showTransparent ? "brightness-0 invert drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]" : ""
+              )}
+              priority
+            />
             <span
               className={cn(
                 "text-lg font-bold tracking-tight transition-colors",
